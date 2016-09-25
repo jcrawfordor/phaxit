@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+import sys, os, configargparse
+from phaxio import PhaxioApi
+import time
+
+def main():
+  conf = configargparse.ArgParser(default_config_files=['~/.phaxit.conf'])
+  conf.add('-c', '--config', is_config_file=True, help='Path to config file')
+  conf.add('-k', '--apikey', required=True, help='Phaxio API key')
+  conf.add('-s', '--apisecret', required=True, help='Phaxio API secret')
+  conf.add('-t', '--to', required=True, action='append', help='Destination phone numbers, 1<ten digits>')
+  conf.add('file', nargs='+', help='Files to send')
+  args = conf.parse_args()
+
+  api = PhaxioApi(args.apikey, args.apisecret)
+  print("Submitting job")
+  reply = api.send(to=args.to, files=args.file)
+  faxid = reply.get('faxId')
+  print("Job submitted with ID {}, now wait.".format(faxid))
+
+  while True:
+    time.sleep(5)
+    reply = api.faxStatus(id=faxid)
+    if reply.get('data')['status'] == "success":
+      print("Fax sent succesfully.")
+      break
+    if reply.get('data')['status'] == "failure":
+      print("Fax failed. See reply:")
+      print(reply)
+      break
+
+if __name__ == "__main__":
+  main()  
