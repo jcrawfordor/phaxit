@@ -15,7 +15,7 @@ Usage
 One or more options (e.g. api key and secret) can be put in a config file
 at ~/.phaxit.conf to avoid having to provide them as options each time.
 
-Then, just use $phaxit -t <phone number> <file> <file> etc. Use multiple -t
+Then, just use $phaxit -t [phone number] [file] [file] etc. Use multiple -t
 options to specify multiple recipients.
 
 Full usage:
